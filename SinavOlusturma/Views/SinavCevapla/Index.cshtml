@@ -1,0 +1,257 @@
+﻿
+@{
+    ViewData["Title"] = "index";
+    Layout = null;
+}
+
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Sınav</title>
+    <meta name="description">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--begin::Foents -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700|Roboto:300,400,500,600,700">
+    <!--end::Fonts -->
+    <!--begin::Global Themje Stkyles(used by all pagesss) -->
+    <link href="~/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/style.bundle.css" rel="stylesheet" type="text/css" />
+    <!--end::Global Theme Styles -->
+    <!--begin::Layout Skins(used by all pages) -->
+    <link href="~/css/skins/header/base/light.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/skins/header/menu/light.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/skins/brand/dark.css" rel="stylesheet" type="text/css" />
+    <link href="~/css/skins/aside/dark.css" rel="stylesheet" type="text/css" />
+    <!--end::Layout Skins -->
+    <link href="~/img/favicon.ico" rel="icon" type="image/x-icon" />
+</head>
+<!--end::head-->
+<!--begin::body-->
+@{
+    SinavOlusturma.Models.Sinavlar SinavModelim = (ViewBag.SinavBilgilerim as List<SinavOlusturma.Models.Sinavlar>)[0];
+    var SinavId = SinavModelim.SinavId;
+    var SinavBaslik = SinavModelim.Baslik;
+    var SinavAciklama = SinavModelim.Aciklama;
+}
+<body class="kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header-mobile--fixed kt-subheader--enabled kt-subheader--fixed kt-subheader--solid kt-page--loading">
+
+
+    <div class="kt-grid kt-grid--hor kt-grid--root">
+        <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--ver kt-page">
+            <div class="kt-grid__item kt-grid__item--fluid kt-grid kt-grid--hor" id="kt_wrapper">
+                <!-- begin:: Content Head -->
+                <!-- end:: Content Head -->
+                <div class="container-fluid" style="margin-top:15px">
+                    <div class="form-group row">
+                        <div class="col-lg-8" style="margin-right:38px;">
+                            <a>
+                                <img src="~/img/logo.png" width="360" style="margin-left:5px;" />
+                            </a>
+                        </div>
+                        <div class="col-lg-4"></div>
+                    </div>
+                    <!--begin::Portlet-->
+                    <div class="kt-portlet">
+                        <div class="kt-portlet__head">
+                            <div class="kt-portlet__head-label">
+                                <h3 class="kt-portlet__head-title">
+                                    @SinavBaslik
+                                </h3>
+                            </div>
+                        </div>
+                        <!--begin::Form-->
+                        <div class="kt-portlet__body">
+                            <div class="kt-form__section kt-form__section--first">
+                                <label class="col-lg-12 col-form-label" style="font-size:14px;">
+                                    @Html.Raw(SinavAciklama)
+                                </label>
+                            </div>
+                        </div>
+                        <!--end::Form-->
+                    </div>
+                    <!--end::Portlet-->
+                    <!--begin::Portlett-->
+                    <form id="SinavCevapla" action="SinavCevapla/SinavCevapKaydet" method="post" novalidate="novalidate">
+                        <div class="row">
+                            @{
+                                <input name="SınavIdKontrol" hidden="hidden" value="@SinavId" />
+
+                                for (int idx = 0; idx < (ViewBag.SoruBilgilerim as List<SinavOlusturma.Models.Sorular>).Count; idx++)
+                                {
+                                    Sorular SoruModelim = (ViewBag.SoruBilgilerim as List<Sorular>)[idx];
+                                    var SoruId = SoruModelim.SoruId;
+                                    var Soru = SoruModelim.Soru;
+
+                                    <div class="col-lg-6">
+                                        <div class="kt-portlet" id="duplicater-@idx">
+                                            <!--begin:e:Form-->
+                                            <div class="kt-portlet__body">
+                                                <div class="kt-form__section kt-form__section--first">
+                                                    <div class="form-group">
+                                                        <div id="DivSoru-@idx" class="col-lg-12">
+                                                            <br />
+                                                            <h5 style="font-size:13px; color:black;">
+                                                                <a id="sModal" data-toggle="modal" data-target="#kt_modal_4_2" style="color:blue"><u>@Soru</u> </a>
+                                                            </h5>
+                                                            <input type="text" class="form-control" name="soru-@idx-id" value="@SoruId" hidden />
+                                                        </div>
+                                                    </div>
+                                                    <div id="kt_repeater_@idx">
+                                                        <div class="form-group row">
+                                                            <div data-repeater-list="" class="col-lg-12">
+                                                                @{
+
+                                                                    string InputName = "";
+                                                                    string RadioName = "";
+                                                                    for (int x = 0; x <
+                                                                        (ViewBag.SoruSecenekBilgilerim as List<SoruSecenekleri>).Count; x++)
+                                                                    {
+                                                                        SoruSecenekleri SoruSecenekleriModelim =
+                                                                            (ViewBag.SoruSecenekBilgilerim as List<SoruSecenekleri>)[x];
+                                                                        var SecenekSoruId = SoruSecenekleriModelim.SoruId;
+                                                                        var Secenek = SoruSecenekleriModelim.Secenek;
+                                                                        if (SoruId == SecenekSoruId)
+                                                                        {
+                                                                            InputName = "soru_" + idx + "_cevap_0";
+                                                                            RadioName = "radio-" + idx;
+
+                                                                            <div class="form-group row">
+                                                                                <div class="col-12">
+                                                                                    <div class="kt-radio-list">
+                                                                                        <label class="kt-radio">
+                                                                                            <input type="radio" value="@Secenek" name="@RadioName" onclick="onClickRadio(@idx)" /> @Secenek
+                                                                                            <span></span>
+                                                                                        </label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                        }
+                                                                    }
+                                                                    <input id="radioTxt-@idx" name="@InputName" hidden />
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+
+                        <!--begin::Portlet-->
+                        <div class="kt-portlet">
+                            <!--begin::Form-->
+                            <div class="kt-portlet__foot">
+                                <div class="kt-form__actions">
+                                    <div class="row">
+                                        <div class="col-5">
+                                        </div>
+                                        <div class="col-2">
+                                            <button id="kaydetDiv" type="submit" class="btn btn-success" style="width:250px">Sınavı Tamamla</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--end::Form-->
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-lg-4" style="margin-right:38px;">
+                            </div>
+                            <div class="col-lg-4">
+                                <p>Bu sınav konusrakogren.com Sınav Olusturma uygulamasında oluşturulmuştur.</p>
+                            </div>
+
+
+                            <div class="col-lg-4" style="margin-right:38px;">
+                            </div>
+                        </div>
+                    </form>
+
+                    <!--end::Portlet-->
+                </div>
+                <!--end::Form-->
+                <!--end::Portlet-->
+            </div>
+            <!-- begin::Scrolltop -->
+            <div id="kt_scrolltop" class="kt-scrolltop">
+                <i class="fa fa-arrow-up"></i>
+            </div>
+            <!-- end::Scrolltop -->
+        </div>
+    </div>
+    <script>
+        function onClickRadio(txtID) {
+            var radios = document.getElementsByName('radio-' + txtID);
+            var raidoxt = document.getElementById('radioTxt-' + txtID);
+            for (var i = 0, length = radios.length; i < length; i++) {
+                if (radios[i].checked) {
+                    // do whatever you want with the checked radio
+                    raidoxt.value = radios[i].value;
+                    // only one radio can be logically checked, don't check the rest
+                    break;
+                }
+            }
+        }
+    </script>
+    <!-- begin::Global Config(global config for global JS sciprts) -->
+    <script>
+        var KTAppOptions = {
+            "colors": {
+                "state": {
+                    "brand": "#5d78ff",
+                    "dark": "#282a3c",
+                    "light": "#ffffff",
+                    "primary": "#5867dd",
+                    "success": "#34bfa3",
+                    "info": "#36a3f7",
+                    "warning": "#ffb822",
+                    "danger": "#fd3995"
+                },
+                "base": {
+                    "label": [
+                        "#c5cbe3",
+                        "#a1a8c3",
+                        "#3d4465",
+                        "#3e4466"
+                    ],
+                    "shape": [
+                        "#f0f3ff",
+                        "#d9dffa",
+                        "#afb4d4",
+                        "#646c9a"
+                    ]
+                }
+            }
+        };
+    </script>
+    <script>
+        function onClickRadio(txtID) {
+            var radios = document.getElementsByName('radio-' + txtID);
+            var raidoxt = document.getElementById('radioTxt-' + txtID);
+            for (var i = 0, length = radios.length; i < length; i++) {
+                if (radios[i].checked) {
+                    // do whatever you want with the checked radio
+                    raidoxt.value = radios[i].value;
+                    // only one radio can be logically checked, don't check the rest
+                    break;
+                }
+            }
+        }
+    </script>
+    <!-- end::Global Config -->
+    <!--begin::Global Theme Bundle(used by all pages) -->
+    <script src="~/plugins/global/plugins.bundle.js" type="text/javascript"></script>
+    <script src="~/js/scripts.bundle.js" type="text/javascript"></script>
+    <!--end::Global Theme Bundle -->
+    <!--begin::Page Scripts(used by this page) -->
+    <script src="~/js/pages/crud/forms/widgets/form-repeater.js" type="text/javascript"></script>
+    <script src="~/js/pages/crud/forms/widgets/bootstrap-select.js" type="text/javascript"></script>
+    <script src="~/js/mesaj2.js" type="text/javascript"></script>
+    <!--end::Page Scripts -->
+</body>
+<!--end::body-->
+</html>

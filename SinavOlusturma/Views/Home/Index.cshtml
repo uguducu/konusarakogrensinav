@@ -1,0 +1,176 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!-- begine:: ConttenggHeadd -->
+<div class="kt-subheader   kt-grid__item" id="kt_subheader">
+    <div class="kt-container  kt-container--fluid ">
+        <div class="kt-subheader__main">
+            <h3 class="kt-subheader__title">
+                Toplam Sınav Sayısı:
+            </h3>
+            <span class="kt-subheader__separator kt-subheader__separator--v"></span>
+            <div class="kt-subheader__group" id="kt_subheader_search">
+                <span class="kt-subheader__desc" id="kt_subheader_total">
+                    @ViewBag.SınavSayisi
+                </span>
+            </div>
+        </div>
+        <div class="kt-subheader__toolbar">
+            <a href="#" class="">
+            </a>
+
+            <form class="kt-form" method="post">
+                <a href="SinavOlustur" class="btn btn-label-brand btn-bold">
+                    Sınav Oluştur
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- end:: Content Headd -->
+<!-- begin:: Content -->
+<div class="kt-container  kt-container--fluid  kt-grid__item kt-grid__item--fluid">
+    <div class="row">
+        @{
+            for (int idx = 0; idx < (ViewBag.ListeSinavlar as List<SinavOlusturma.Models.Sinavlar>).Count; idx++)
+            {
+                SinavOlusturma.Models.Sinavlar SinavModelim = (ViewBag.ListeSinavlar as List<Sinavlar>)[idx];
+
+                var YanitlayanKisiSayisi = SinavModelim.YanıtlayanKisiSayisi;
+                var SinavBaslik = SinavModelim.Baslik;
+                var SinavId = SinavModelim.SinavId;
+                var SinavOlusturmaTarihi = SinavModelim.OlusturulmaZamani;
+                var SinavOlusturanKisi = SinavModelim.Olusturan;
+
+                <div id="sinav-@idx" class="col-xl-3">
+                    <div class="kt-portlet kt-portlet--height-fluid" id="gizle">
+                        <div class="kt-portlet__head kt-portlet__head--noborder">
+                            <div class="kt-portlet__head-label">
+                                <h3 class="kt-portlet__head-title">
+                                </h3>
+                            </div>
+                            <div class="kt-portlet__head-toolbar">
+                                <a href="#" class="btn btn-icon" data-toggle="dropdown">
+                                    <i class="flaticon-more-1 kt-font-brand"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right">
+                                    <ul class="kt-nav">
+
+                                        <li class="kt-nav__item">
+                                            <a class="kt-nav__link" onclick="SinavSil(@SinavId,@idx)">
+                                                <i class="kt-nav__link-icon fas fa-trash-alt"></i>
+                                                <span class="kt-nav__link-text">Sil</span>
+                                            </a>
+                                        </li>
+
+                                        <form id="SinavYanitlari-@idx" class="kt-form" action="/SinavYanitlariListele" method="post">
+                                        <li class="kt-nav__item">
+                                            <input name="formIDKontrol" hidden="hidden" value="" />
+                                            <a class="kt-nav__link" onclick="document.getElementById('SinavYanitlariListele-' + @idx).submit()">
+                                                <i class="kt-nav__link-icon fa fa-check"></i>
+                                                <span class="kt-nav__link-text">Yanıtlar</span>
+                                            </a>
+                                        </li>
+                                        </form>
+                                    </ul>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="kt-portlet__body">
+                            <!--begin::Widget -->
+                            <div class="kt-widget kt-widget--user-profile-2">
+                                <div class="kt-widget__head">
+                                    <div class="kt-widget__media">
+                                        <img class="kt-hidden" src="media/users/100_1.jpg" alt="image">
+                                        <div class="kt-widget__pic kt-widget__pic--info kt-font-info kt-font-boldest  kt-hidden-">
+                                            @SinavId;
+                                            <input name="formIDKontrol" hidden="hidden" value="@SinavId" />
+                                        </div>
+                                    </div>
+                                    <div class="kt-widget__info">
+                                        <a href="#" class="kt-widget__username">
+                                            @SinavBaslik
+                                        </a>
+                                        <span class="kt-widget__desc">
+                                            @SinavOlusturanKisi;
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="kt-widget__body">
+                                    <div class="kt-widget__section">
+                                    </div>
+                                    <div class="kt-widget__item">
+                                        <div class="kt-widget__contact">
+                                            <span class="kt-widget__label">Oluşturma Tarihi:</span>
+                                            <a class="kt-widget__data">@SinavOlusturmaTarihi</a>
+                                        </div>
+                                        <div class="kt-widget__contact">
+                                            <span class="kt-widget__label">Yanıtlayan Kişi Sayısı:</span>
+                                            <a class="kt-widget__data">@YanitlayanKisiSayisi</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <form class="kt-form" action="/SinavCevapla" method="post">
+                                    <div class="kt-widget__footer">
+                                        <input name="sınavıdkontrol" hidden="hidden" value="@SinavId" />
+                                        <button type="submit" class="btn btn-label-primary btn-lg btn-upper">Sınava Git</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <!--end::Widget -->
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+<!--begin::Page Scripts(used by this page) -->
+
+@section Scripts{
+    <script>
+        function SinavSil(SinavSilId, DivId) {
+            swal.fire({
+                customClass: {
+                    confirmButton: 'btn btn-success btnAlert',
+                    cancelButton: 'btn btn-danger btnAlert'
+                },
+                buttonsStyling: false,
+                title: 'Uyarı',
+                text: 'Sınavı Silmek İstediğinize Eminmisiniz? Bu işlemi geri alamazsınız.',
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Evet, Eminim',
+                cancelButtonText: 'Vazgeçtim',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/SinavSil", //silme olayı gelecek
+                        data: {
+                            "SinavSSilId": SinavSilId,
+                        },
+                        contentType: "application/x-www-form-urlencoded",
+                        dataType: "json",
+                        success: function (result) {
+                            swal.fire({
+                                title: 'Başarılı',
+                                text: 'Sinav Silindi',
+                                type: 'success',
+                                confirmButtonText: 'Tamam'
+                            }),
+                                $("#sinav-" + DivId).remove()
+                        },
+                        error: function (req, status, error) {
+                            location.reload();
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+}
+<!--end::Page Scripts -->
